@@ -11,21 +11,22 @@ using InverseFunctions
 export ℙ, ⩔, ⩓
 
 
-ℙ(f::Base.Fix2{typeof(< )}, d) = cdf(d, f.x - eps(float(typeof(f.x))))
-ℙ(f::Base.Fix2{typeof(<=)}, d) = cdf(d, f.x)
-ℙ(f::Base.Fix2{typeof(==)}, d::DiscreteDistribution) = pdf(d, f.x)
-ℙ(f::Base.Fix2{typeof(!=)}, d::DiscreteDistribution) = 1 - pdf(d, f.x)
-ℙ(f::Base.Fix2{typeof(>=)}, d) = ccdf(d, f.x - eps(float(typeof(f.x))))
-ℙ(f::Base.Fix2{typeof(> )}, d) = ccdf(d, f.x)
+ℙ(f::Base.Fix2{typeof(< )}, d::UnivariateDistribution) = cdf(d, f.x - eps(float(typeof(f.x))))
+ℙ(f::Base.Fix2{typeof(<=)}, d::UnivariateDistribution) = cdf(d, f.x)
+ℙ(f::Base.Fix2{typeof(==)}, d::DiscreteUnivariateDistribution) = pdf(d, f.x)
+ℙ(f::Base.Fix2{typeof(!=)}, d::DiscreteUnivariateDistribution) = 1 - pdf(d, f.x)
+ℙ(f::Base.Fix2{typeof(>=)}, d::UnivariateDistribution) = ccdf(d, f.x - eps(float(typeof(f.x))))
+ℙ(f::Base.Fix2{typeof(> )}, d::UnivariateDistribution) = ccdf(d, f.x)
 
-ℙ(f::Base.Fix2{typeof(∈)}, d) = d isa DiscreteDistribution ? sum(x -> pdf(d, x), f.x) : error("Only discrete distributions supported")
-function ℙ(f::Base.Fix2{typeof(∈), <:Interval}, d)
+ℙ(f::Base.Fix2{typeof(∈)}, d::UnivariateDistribution) = d isa DiscreteUnivariateDistribution ? sum(x -> pdf(d, x), f.x) : error("Only discrete distributions supported")
+function ℙ(f::Base.Fix2{typeof(∈), <:Interval}, d::UnivariateDistribution)
     Pr = isrightclosed(f.x) ? ℙ(<=(rightendpoint(f.x)), d) : ℙ(<(rightendpoint(f.x)), d)
     Pl = isleftclosed(f.x)  ? ℙ(<(leftendpoint(f.x)), d)   : ℙ(<=(leftendpoint(f.x)), d)
     return Pr - Pl
 end
 
-ℙ(f, d) = @p pred_to_intervals(f) |> intervals |> sum(int -> ℙ(∈(int), d))
+ℙ(f, d::UnivariateDistribution) = @p pred_to_intervals(f) |> intervals |> sum(int -> ℙ(∈(int), d))
+
 
 
 include("intervalsunion.jl")
