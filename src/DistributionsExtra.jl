@@ -17,7 +17,7 @@ export ℙ
 ℙ(f::Base.Fix2{typeof(> )}, d) = ccdf(d, f.x)
 
 ℙ(f::Base.Fix2{typeof(∈)}, d::DiscreteDistribution) = sum(x -> pdf(d, x), f.x)
-function ℙ(f::Base.Fix2{typeof(∈), <:Interval{:closed, :closed}}, d::DiscreteDistribution)
+function ℙ(f::Base.Fix2{typeof(∈), <:Interval}, d)
     Pr = isrightclosed(f.x) ? ℙ(<=(rightendpoint(f.x)), d) : ℙ(<(rightendpoint(f.x)), d)
     Pl = isleftclosed(f.x)  ? ℙ(<(leftendpoint(f.x)), d)   : ℙ(<=(leftendpoint(f.x)), d)
     return Pr - Pl
