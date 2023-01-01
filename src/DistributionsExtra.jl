@@ -30,9 +30,9 @@ end
 
 
 function ℙᵋ(f, d::ContinuousUnivariateDistribution; kwargs...)
-	val, err = quadgk(x -> pdf(d, x) * f(x), extrema(d)...; kwargs...)
-	@assert err < 1e-3 * val
-	val
+    val, err = quadgk(x -> pdf(d, x) * f(x), extrema(d)...; kwargs...)
+    @assert err < 1e-3 * val
+    val
 end
 
 
@@ -53,7 +53,7 @@ pred_to_intervals(f::Base.Fix2{typeof(!=)}) = pred_to_intervals(!(==)(f.x))
 pred_to_intervals(f::ChainedFixes.Or) =
     @p ChainedFixes.getargs(f) |> map(IntervalsUnion(pred_to_intervals(_))) |> reduce(∪)
 pred_to_intervals(f::ChainedFixes.And) =
-	@p ChainedFixes.getargs(f) |> map(pred_to_intervals) |> reduce(∩)
+    @p ChainedFixes.getargs(f) |> map(pred_to_intervals) |> reduce(∩)
 
 pred_to_intervals(f::ComposedFunction{typeof(!)}) = setdiff(-Inf..Inf, IntervalsUnion(pred_to_intervals(f.inner)))
 if !(!identity isa ComposedFunction)  # Julia pre-1.9
@@ -61,8 +61,8 @@ if !(!identity isa ComposedFunction)  # Julia pre-1.9
 end
 
 function pred_to_intervals(f::ComposedFunction)
-	ints = pred_to_intervals(f.outer)
-	preimage(f.inner, ints)
+    ints = pred_to_intervals(f.outer)
+    preimage(f.inner, ints)
 end
 
 end
