@@ -8,7 +8,7 @@ using DataPipes
 using AccessorsExtra
 using InverseFunctions
 
-export ℙ
+export ℙ, ⩔, ⩓
 
 
 ℙ(f::Base.Fix2{typeof(< )}, d) = cdf(d, f.x - eps(float(typeof(f.x))))
