@@ -57,6 +57,24 @@ d = Poisson(1)
 # ╔═╡ eec6e87b-41fc-42b6-90de-dccaa7d5f876
 ℙ(∈(0..2.1), d)
 
+# ╔═╡ 44db4d77-c7c1-4ce1-8f5e-192212055926
+ℙ(>=(10), Poisson(1.45))
+
+# ╔═╡ 22f064f1-c546-401b-b408-ca69f2ecb771
+ℙ(>=(5), Normal(0, 1))
+
+# ╔═╡ b577df64-a0fc-4dd5-a14b-769c93f8f9f6
+@which ℙ(∉(0±5), Normal(0, 1))
+
+# ╔═╡ c7cdf967-a852-4fab-98ea-6b29dd3d0618
+ℙ(∉(0±5), Normal(0, 1))
+
+# ╔═╡ 9fa86466-0ab8-4ce0-95ae-e2a850bfa9e6
+ℙ(∈(0±5), Normal(0, 1))
+
+# ╔═╡ da9b489a-4ea1-48b0-bde0-3adc47e55647
+DistributionsExtra.pred_to_intervals(∈(0±5))
+
 # ╔═╡ 98d5e2b6-f213-441e-b791-11d42bea1db9
 ℙ(!∈(0..2.1), d)
 
@@ -575,6 +593,12 @@ version = "17.4.0+0"
 # ╠═0b1f5126-9ab1-455f-b268-eac68517a58f
 # ╠═68e3f7ba-fa9c-4f70-85d4-c4011dfb49d9
 # ╠═eec6e87b-41fc-42b6-90de-dccaa7d5f876
+# ╠═44db4d77-c7c1-4ce1-8f5e-192212055926
+# ╠═22f064f1-c546-401b-b408-ca69f2ecb771
+# ╠═b577df64-a0fc-4dd5-a14b-769c93f8f9f6
+# ╠═c7cdf967-a852-4fab-98ea-6b29dd3d0618
+# ╠═9fa86466-0ab8-4ce0-95ae-e2a850bfa9e6
+# ╠═da9b489a-4ea1-48b0-bde0-3adc47e55647
 # ╠═98d5e2b6-f213-441e-b791-11d42bea1db9
 # ╠═b390966d-dc5d-4df1-ab8d-f2643ea33aee
 # ╠═c985b25e-2117-41a2-b007-c7eac9fb8298

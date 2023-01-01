@@ -32,6 +32,12 @@ pred_to_intervals(f::Base.Fix2{typeof(==)}) = (Interval{:closed, :closed}( f.x, 
 pred_to_intervals(f::Base.Fix2{typeof(<=)}) = (Interval{:open,   :closed}(-Inf, f.x),)
 pred_to_intervals(f::Base.Fix2{typeof(< )}) = (Interval{:open,     :open}(-Inf, f.x),)
 pred_to_intervals(f::Base.Fix2{typeof(∈), <:Interval}) = (f.x,)
+pred_to_intervals(f::Base.Fix2{typeof(∉), <:Interval{L, R}}) where {L, R} = (
+    Interval{:open, _opposite_closedness(L)}(-Inf, leftendpoint(f.x)),
+    Interval{_opposite_closedness(R), :open}(rightendpoint(f.x), Inf),
+)
+
+_opposite_closedness(x::Symbol) = x == :closed ? :open : x == :open ? :closed : error()
 
 pred_to_intervals(f::ChainedFixes.Or) =
     @p ChainedFixes.getargs(f) |>
