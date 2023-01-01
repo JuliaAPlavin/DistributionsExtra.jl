@@ -4,3 +4,16 @@ authors = ["Alexander Plavin <alexander@plav.in>"]
 version = "0.1.0"
 
 [deps]
+ChainedFixes = "9706b775-b1f4-4c74-b677-0491368ea71c"
+DataPipes = "02685ad9-2d12-40c3-9f73-c6aeda6a7ff5"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+
+[compat]
+ChainedFixes = "0.3.1"
+DataPipes = "0.2.15"
+Distributions = "0.25.65"
+IntervalSets = "0.7.1"
+Reexport = "1.2.2"
+julia = "1.7"
