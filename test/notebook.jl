@@ -15,99 +15,49 @@ end
 # ╔═╡ 1d765607-f799-4108-b479-cf4160e58e77
 using AccessorsExtra
 
-# ╔═╡ 24df857f-1b21-402e-8df3-a7b2e9e83d32
-using DataPipes
-
-# ╔═╡ 00226ff0-3e1d-44ef-93e6-bc8d670216b5
+# ╔═╡ 4e0e72b1-ef24-4d6d-8c02-c5c59a3df541
 
 
-# ╔═╡ 54805fec-8a78-4f54-88fb-ad81f984b7b6
-
-
-# ╔═╡ 0c36c02f-30b0-4745-a147-9232289599f6
+# ╔═╡ 57d83865-4083-4b9f-ad42-169d3f6a1738
 d = Poisson(1)
 
-# ╔═╡ a19524b6-065d-47d6-a995-937e366524ba
-ℙ(>=(0), d)
+# ╔═╡ 52075901-ac26-457a-9502-7b133beb0bd1
+ℙ((<)(2), d)
 
-# ╔═╡ 5755cca9-1398-422b-9b02-2b5a81b285f2
-ℙ(==(2.5), d)
+# ╔═╡ e6484b1d-e516-4e9f-9068-acc6c2d8d7aa
+ℙ((<=)(2), d)
 
-# ╔═╡ e41a7de4-115b-4cb1-982b-325801607659
-ℙ(>(0), d)
+# ╔═╡ 80ff573c-72cd-4334-b0df-acfeaf0bf1db
+DistributionsExtra.pred_to_intervals((<)(2))
 
-# ╔═╡ b587fe7a-1b1f-474e-a577-7a8ec5e60a46
-ℙ(>=(1), d)
+# ╔═╡ bfe073c3-4719-45e4-b7fc-0bd738feafa7
+DistributionsExtra.pred_to_intervals((<=)(2))
 
-# ╔═╡ 625e1c55-efe4-4fbe-a790-1a861c63277e
+# ╔═╡ ae4bcdcc-85b9-499f-becb-f19695b1e64a
+ℙ((∈)(0 .. 1), d)
+
+# ╔═╡ 15289fdf-e2b8-4220-908d-f877f4d46ef6
 ℙ(<=(1), d)
 
-# ╔═╡ 6df78a42-84b7-4cd5-9ef5-e927fbddff1f
-ℙ(∈(1), d)
+# ╔═╡ 1a10f6b7-14f0-4784-bba3-f0281e40379e
+ℙ(<(prevfloat(-0.0)), d)
 
-# ╔═╡ 3c54e0c9-7bf4-47b8-89c1-ee7c0197637b
-ℙ(∈(0:2), d)
+# ╔═╡ 3c673bea-af11-48c8-b4da-ee8e6e71ac68
+cdf(d, prevfloat(0.0))
 
-# ╔═╡ 0b1f5126-9ab1-455f-b268-eac68517a58f
-ℙ(∈([0, 1, 2]), d)
-
-# ╔═╡ 68e3f7ba-fa9c-4f70-85d4-c4011dfb49d9
-ℙ(∈([0, 2]), d)
-
-# ╔═╡ eec6e87b-41fc-42b6-90de-dccaa7d5f876
-ℙ(∈(0..2.1), d)
-
-# ╔═╡ 44db4d77-c7c1-4ce1-8f5e-192212055926
-ℙ(>=(10), Poisson(1.45))
-
-# ╔═╡ 22f064f1-c546-401b-b408-ca69f2ecb771
-ℙ(>=(5), Normal(0, 1))
-
-# ╔═╡ b577df64-a0fc-4dd5-a14b-769c93f8f9f6
-@which ℙ(∉(0±5), Normal(0, 1))
-
-# ╔═╡ c7cdf967-a852-4fab-98ea-6b29dd3d0618
-ℙ(∉(0±5), Normal(0, 1))
-
-# ╔═╡ 9fa86466-0ab8-4ce0-95ae-e2a850bfa9e6
-ℙ(∈(0±5), Normal(0, 1))
-
-# ╔═╡ 98d5e2b6-f213-441e-b791-11d42bea1db9
-ℙ(!∈(0..2.1), d)
-
-# ╔═╡ b390966d-dc5d-4df1-ab8d-f2643ea33aee
-ℙ((!) ∘ ∈(0..2.1), d)
-
-# ╔═╡ aedf3a82-6487-4f5a-b127-164f82e3152c
-ℙ((!) ∘ ∈(0..2.1), d)
-
-# ╔═╡ 0478a4b4-9b79-4ac4-8d6c-49fb394ceef1
-ℙ(!(>(3) ⩔ <(-3)), Normal(0, 1))
-
-# ╔═╡ fad8ec99-fc88-41b5-8ab8-9723e24cfa83
-
-
-# ╔═╡ cd3d4df6-2e58-46f0-9f10-f69ee41ae48c
-ℙ(@optic(abs(_) < 3), Normal(0, 1))
-
-# ╔═╡ 514447ea-241c-4cc8-9203-6fefc456a594
-ℙ(@optic(_^3 > 27), Normal(0, 1))
-
-# ╔═╡ c985b25e-2117-41a2-b007-c7eac9fb8298
-
+# ╔═╡ ae6164ca-6959-4dec-86f1-37d13d35cc92
+ℙ(>=(0), d)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 AccessorsExtra = "33016aad-b69d-45be-9359-82a41f556fd4"
-DataPipes = "02685ad9-2d12-40c3-9f73-c6aeda6a7ff5"
 DistributionsExtra = "0ee08beb-333f-446c-9896-35a4b83b284a"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]
 AccessorsExtra = "~0.1.7"
-DataPipes = "~0.2.15"
 DistributionsExtra = "~0.1.0"
 Revise = "~3.3.3"
 """
@@ -118,7 +68,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.0-rc4"
 manifest_format = "2.0"
-project_hash = "87b0993ecbb84c60e43fee9dfe09ac8b0b00961d"
+project_hash = "cce3e2d9266fe4c7e147d3b7a08218985226fc90"
 
 [[deps.Accessors]]
 deps = ["Compat", "CompositionsBase", "ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "MacroTools", "Requires", "Test"]
@@ -244,7 +194,7 @@ uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
 version = "0.25.65"
 
 [[deps.DistributionsExtra]]
-deps = ["AccessorsExtra", "ChainedFixes", "DataPipes", "Distributions", "IntervalSets", "InverseFunctions", "Reexport"]
+deps = ["AccessorsExtra", "ChainedFixes", "DataPipes", "Distributions", "IntervalSets", "InverseFunctions", "QuadGK", "Reexport"]
 path = "../../home/aplavin/.julia/dev/DistributionsExtra"
 uuid = "0ee08beb-333f-446c-9896-35a4b83b284a"
 version = "0.1.3"
@@ -592,33 +542,17 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╠═b8d86f7e-021c-11ed-34a4-41bffea21739
-# ╠═00226ff0-3e1d-44ef-93e6-bc8d670216b5
-# ╠═54805fec-8a78-4f54-88fb-ad81f984b7b6
-# ╠═0c36c02f-30b0-4745-a147-9232289599f6
-# ╠═a19524b6-065d-47d6-a995-937e366524ba
-# ╠═5755cca9-1398-422b-9b02-2b5a81b285f2
-# ╠═e41a7de4-115b-4cb1-982b-325801607659
-# ╠═b587fe7a-1b1f-474e-a577-7a8ec5e60a46
-# ╠═625e1c55-efe4-4fbe-a790-1a861c63277e
-# ╠═6df78a42-84b7-4cd5-9ef5-e927fbddff1f
-# ╠═3c54e0c9-7bf4-47b8-89c1-ee7c0197637b
-# ╠═0b1f5126-9ab1-455f-b268-eac68517a58f
-# ╠═68e3f7ba-fa9c-4f70-85d4-c4011dfb49d9
-# ╠═eec6e87b-41fc-42b6-90de-dccaa7d5f876
-# ╠═44db4d77-c7c1-4ce1-8f5e-192212055926
-# ╠═22f064f1-c546-401b-b408-ca69f2ecb771
-# ╠═b577df64-a0fc-4dd5-a14b-769c93f8f9f6
-# ╠═c7cdf967-a852-4fab-98ea-6b29dd3d0618
-# ╠═9fa86466-0ab8-4ce0-95ae-e2a850bfa9e6
-# ╠═98d5e2b6-f213-441e-b791-11d42bea1db9
-# ╠═b390966d-dc5d-4df1-ab8d-f2643ea33aee
-# ╠═aedf3a82-6487-4f5a-b127-164f82e3152c
-# ╠═0478a4b4-9b79-4ac4-8d6c-49fb394ceef1
-# ╠═fad8ec99-fc88-41b5-8ab8-9723e24cfa83
 # ╠═1d765607-f799-4108-b479-cf4160e58e77
-# ╠═cd3d4df6-2e58-46f0-9f10-f69ee41ae48c
-# ╠═514447ea-241c-4cc8-9203-6fefc456a594
-# ╠═c985b25e-2117-41a2-b007-c7eac9fb8298
-# ╠═24df857f-1b21-402e-8df3-a7b2e9e83d32
+# ╠═4e0e72b1-ef24-4d6d-8c02-c5c59a3df541
+# ╠═57d83865-4083-4b9f-ad42-169d3f6a1738
+# ╠═52075901-ac26-457a-9502-7b133beb0bd1
+# ╠═e6484b1d-e516-4e9f-9068-acc6c2d8d7aa
+# ╠═80ff573c-72cd-4334-b0df-acfeaf0bf1db
+# ╠═bfe073c3-4719-45e4-b7fc-0bd738feafa7
+# ╠═ae4bcdcc-85b9-499f-becb-f19695b1e64a
+# ╠═15289fdf-e2b8-4220-908d-f877f4d46ef6
+# ╠═1a10f6b7-14f0-4784-bba3-f0281e40379e
+# ╠═3c673bea-af11-48c8-b4da-ee8e6e71ac68
+# ╠═ae6164ca-6959-4dec-86f1-37d13d35cc92
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
