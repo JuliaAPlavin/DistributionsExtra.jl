@@ -9,6 +9,7 @@ using Test
     @test pred_to_intervals(∉(0±5)) == IntervalsUnion((Interval{:closed, :open}(-Inf, -5), Interval{:open, :closed}(5, Inf)))
     @test pred_to_intervals(>(10) ⩔ <(2) ⩔ ∈(4..5) ⩔ ==(6)) == IntervalsUnion((Interval{:open, :closed}(10, Inf), Interval{:closed, :open}(-Inf, 2), 4..5, 6..6))
     @test pred_to_intervals(>(10) ⩓ ∉(7..13) ⩓ <(21) ⩓ ∉(7..13) ⩓ >(5)) == IntervalsUnion(Interval{:open, :open}(13., 21.))
+    @test pred_to_intervals((>(10) ⩔ <(2) ⩔ ∈(4..5) ⩔ ==(6)) ⩓ !=(0)) == IntervalsUnion((Interval{:open, :closed}(10, Inf), Interval{:closed, :open}(-Inf, 2), 4..5, 6..6))
     @test pred_to_intervals(@optic(_^3 > 27)) == Interval{:open, :closed}(3, Inf)
     @test pred_to_intervals(@optic(_^3 >= 27)) == 3..Inf
     @test pred_to_intervals(@optic(-_^3 <= -27)) == 3..Inf

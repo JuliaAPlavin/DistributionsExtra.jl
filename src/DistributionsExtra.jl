@@ -38,7 +38,9 @@ pred_to_intervals(f::Base.Fix2{typeof(==)}) = Interval{:closed, :closed}( f.x, f
 pred_to_intervals(f::Base.Fix2{typeof(<=)}) = Interval{:closed, :closed}(-Inf, f.x)
 pred_to_intervals(f::Base.Fix2{typeof(< )}) = Interval{:closed,   :open}(-Inf, f.x)
 pred_to_intervals(f::Base.Fix2{typeof(∈), <:Union{Interval, IntervalsUnion}}) = f.x
-pred_to_intervals(f::Base.Fix2{typeof(∉), <:Union{Interval, IntervalsUnion}}) = setdiff(-Inf..Inf, IntervalsUnion(f.x))
+
+pred_to_intervals(f::Base.Fix2{typeof(∉), <:Union{Interval, IntervalsUnion}}) = pred_to_intervals(!∈(f.x))
+pred_to_intervals(f::Base.Fix2{typeof(!=)}) = pred_to_intervals(!(==)(f.x))
 
 pred_to_intervals(f::ChainedFixes.Or) =
     @p ChainedFixes.getargs(f) |> map(IntervalsUnion(pred_to_intervals(_))) |> reduce(∪)
