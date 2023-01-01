@@ -1,7 +1,7 @@
 name = "DistributionsExtra"
 uuid = "0ee08beb-333f-446c-9896-35a4b83b284a"
 authors = ["Alexander Plavin <alexander@plav.in>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 ChainedFixes = "9706b775-b1f4-4c74-b677-0491368ea71c"
