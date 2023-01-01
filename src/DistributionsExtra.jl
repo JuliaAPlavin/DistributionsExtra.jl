@@ -5,6 +5,7 @@ using Reexport
 @reexport using IntervalSets
 using ChainedFixes
 using DataPipes
+using AccessorsExtra
 
 export ℙ
 
@@ -23,15 +24,15 @@ function ℙ(f::Base.Fix2{typeof(∈), <:Interval}, d)
     return Pr - Pl
 end
 
-ℙ(f, d) = sum(int -> ℙ(∈(int), d), (pred_to_intervals(f)::IntervalsUnion).ints)
+ℙ(f, d) = @p pred_to_intervals(f) |> intervals |> sum(int -> ℙ(∈(int), d))
 
 
-pred_to_intervals(f::Base.Fix2{typeof(> )}) = IntervalsUnion((Interval{:open,     :open}( f.x, Inf),))
-pred_to_intervals(f::Base.Fix2{typeof(>=)}) = IntervalsUnion((Interval{:closed,   :open}( f.x, Inf),))
-pred_to_intervals(f::Base.Fix2{typeof(==)}) = IntervalsUnion((Interval{:closed, :closed}( f.x, f.x),))
-pred_to_intervals(f::Base.Fix2{typeof(<=)}) = IntervalsUnion((Interval{:open,   :closed}(-Inf, f.x),))
-pred_to_intervals(f::Base.Fix2{typeof(< )}) = IntervalsUnion((Interval{:open,     :open}(-Inf, f.x),))
-pred_to_intervals(f::Base.Fix2{typeof(∈), <:Interval}) = IntervalsUnion((f.x,))
+pred_to_intervals(f::Base.Fix2{typeof(> )}) = Interval{:open,   :closed}( f.x, Inf)
+pred_to_intervals(f::Base.Fix2{typeof(>=)}) = Interval{:closed, :closed}( f.x, Inf)
+pred_to_intervals(f::Base.Fix2{typeof(==)}) = Interval{:closed, :closed}( f.x, f.x)
+pred_to_intervals(f::Base.Fix2{typeof(<=)}) = Interval{:closed, :closed}(-Inf, f.x)
+pred_to_intervals(f::Base.Fix2{typeof(< )}) = Interval{:closed,   :open}(-Inf, f.x)
+pred_to_intervals(f::Base.Fix2{typeof(∈), <:Interval}) = f.x
 pred_to_intervals(f::Base.Fix2{typeof(∉)}) = setdiff(-Inf..Inf, IntervalsUnion((f.x,)))
 
 pred_to_intervals(f::ChainedFixes.Or) =
@@ -57,9 +58,14 @@ _setdiff(a::Interval{La, Ra}, b::Interval{Lb, Rb}) where {La, Ra, Lb, Rb} = Inte
     Interval{_opposite_closedness(Rb), Ra}(rightendpoint(b), rightendpoint(a)),
 ))
 
-Base.setdiff(a::Interval, b::IntervalsUnion) = @p b.ints |> map(_setdiff(a, _)) |> reduce(∩)
-Base.:∪(a::IntervalsUnion, b::IntervalsUnion) = IntervalsUnion((a.ints..., b.ints...))
-Base.:∩(a::Interval, b::IntervalsUnion) = @p b.ints |> map(a ∩ _) |> IntervalsUnion |> _dropempty
-Base.:∩(a::IntervalsUnion, b::IntervalsUnion) = @p a.ints |> map(_ ∩ b) |> reduce(∪)
+const IIU = Union{Interval, IntervalsUnion}
+
+Base.setdiff(a::Interval, b::IIU) = @p intervals(b) |> map(_setdiff(a, _)) |> reduce(∩)
+Base.:∪(a::IIU, b::IIU) = IntervalsUnion((intervals(a)..., intervals(b)...))
+Base.:∩(a::Interval, b::IntervalsUnion) = @modify(i -> a ∩ i, intervals(b)) |> _dropempty
+Base.:∩(a::IntervalsUnion, b::IntervalsUnion) = @p intervals(a) |> map(_ ∩ b) |> reduce(∪)
+
+intervals(x::Interval) = (x,)
+intervals(x::IntervalsUnion) = x.ints
 
 end
