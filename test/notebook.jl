@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.9
+# v0.19.11
 
 using Markdown
 using InteractiveUtils
@@ -11,6 +11,9 @@ begin
 	eval(:(Pkg.develop(path="..")))
 	using DistributionsExtra
 end
+
+# ╔═╡ 1d765607-f799-4108-b479-cf4160e58e77
+using AccessorsExtra
 
 # ╔═╡ 24df857f-1b21-402e-8df3-a7b2e9e83d32
 using DataPipes
@@ -72,27 +75,31 @@ d = Poisson(1)
 # ╔═╡ 9fa86466-0ab8-4ce0-95ae-e2a850bfa9e6
 ℙ(∈(0±5), Normal(0, 1))
 
-# ╔═╡ da9b489a-4ea1-48b0-bde0-3adc47e55647
-DistributionsExtra.pred_to_intervals(∈(0±5))
-
 # ╔═╡ 98d5e2b6-f213-441e-b791-11d42bea1db9
 ℙ(!∈(0..2.1), d)
 
 # ╔═╡ b390966d-dc5d-4df1-ab8d-f2643ea33aee
 ℙ((!) ∘ ∈(0..2.1), d)
 
+# ╔═╡ aedf3a82-6487-4f5a-b127-164f82e3152c
+ℙ((!) ∘ ∈(0..2.1), d)
+
+# ╔═╡ fad8ec99-fc88-41b5-8ab8-9723e24cfa83
+
+
+# ╔═╡ cd3d4df6-2e58-46f0-9f10-f69ee41ae48c
+ℙ(@optic(abs(_) > 3), Normal(0, 1))
+
+# ╔═╡ 514447ea-241c-4cc8-9203-6fefc456a594
+ℙ(@optic(_^3 > 27), Normal(0, 1))
+
 # ╔═╡ c985b25e-2117-41a2-b007-c7eac9fb8298
 
-
-# ╔═╡ d793b25d-8899-44e1-be1a-82edf3d43b89
-DistributionsExtra.pred_to_intervals(>(10) ⩔ <(2) ⩔ ∈(4..5))
-
-# ╔═╡ 62e88c55-bd40-4698-a3b1-5dc8602d9491
-DistributionsExtra.pred_to_intervals(>(10) ⩓ <(21) ⩓ >(50))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+AccessorsExtra = "33016aad-b69d-45be-9359-82a41f556fd4"
 ChainedFixes = "9706b775-b1f4-4c74-b677-0491368ea71c"
 DataPipes = "02685ad9-2d12-40c3-9f73-c6aeda6a7ff5"
 DistributionsExtra = "0ee08beb-333f-446c-9896-35a4b83b284a"
@@ -100,6 +107,7 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]
+AccessorsExtra = "~0.1.7"
 ChainedFixes = "~0.3.1"
 DataPipes = "~0.2.15"
 DistributionsExtra = "~0.1.0"
@@ -110,15 +118,21 @@ Revise = "~3.3.3"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.0-rc1"
+julia_version = "1.8.0-rc4"
 manifest_format = "2.0"
-project_hash = "114d584d4cd7014e02201c7777da56a40c2d04c8"
+project_hash = "2edd0c3132656959724d866c65ae8adaa0759528"
 
 [[deps.Accessors]]
 deps = ["Compat", "CompositionsBase", "ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "MacroTools", "Requires", "Test"]
-git-tree-sha1 = "829d0f8c58316a8ac6f40f064423adfebf21108c"
+git-tree-sha1 = "c877a35749324754d3c8fffb09fc1f9db144ff8f"
 uuid = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
-version = "0.1.17"
+version = "0.1.18"
+
+[[deps.AccessorsExtra]]
+deps = ["Accessors", "ConstructionBase", "InverseFunctions", "Reexport", "Requires"]
+git-tree-sha1 = "5ddd6245e70db4bae8d6b86e8eb2c879b8bcb818"
+uuid = "33016aad-b69d-45be-9359-82a41f556fd4"
+version = "0.1.7"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -232,10 +246,10 @@ uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
 version = "0.25.65"
 
 [[deps.DistributionsExtra]]
-deps = ["ChainedFixes", "DataPipes", "Distributions", "IntervalSets", "Reexport"]
+deps = ["AccessorsExtra", "ChainedFixes", "DataPipes", "Distributions", "IntervalSets", "InverseFunctions", "Reexport"]
 path = "../../home/aplavin/.julia/dev/DistributionsExtra"
 uuid = "0ee08beb-333f-446c-9896-35a4b83b284a"
-version = "0.1.0"
+version = "0.1.1"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -320,7 +334,7 @@ version = "0.6.3"
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "7.81.0+0"
+version = "7.84.0+0"
 
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -565,12 +579,12 @@ version = "1.2.12+3"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.1.0+0"
+version = "5.1.1+0"
 
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.41.0+1"
+version = "1.48.0+0"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -598,13 +612,15 @@ version = "17.4.0+0"
 # ╠═b577df64-a0fc-4dd5-a14b-769c93f8f9f6
 # ╠═c7cdf967-a852-4fab-98ea-6b29dd3d0618
 # ╠═9fa86466-0ab8-4ce0-95ae-e2a850bfa9e6
-# ╠═da9b489a-4ea1-48b0-bde0-3adc47e55647
 # ╠═98d5e2b6-f213-441e-b791-11d42bea1db9
 # ╠═b390966d-dc5d-4df1-ab8d-f2643ea33aee
+# ╠═aedf3a82-6487-4f5a-b127-164f82e3152c
+# ╠═fad8ec99-fc88-41b5-8ab8-9723e24cfa83
+# ╠═1d765607-f799-4108-b479-cf4160e58e77
+# ╠═cd3d4df6-2e58-46f0-9f10-f69ee41ae48c
+# ╠═514447ea-241c-4cc8-9203-6fefc456a594
 # ╠═c985b25e-2117-41a2-b007-c7eac9fb8298
 # ╠═24df857f-1b21-402e-8df3-a7b2e9e83d32
 # ╠═5d6f273d-e80c-48cd-b3b1-c2bb61b5b15d
-# ╠═d793b25d-8899-44e1-be1a-82edf3d43b89
-# ╠═62e88c55-bd40-4698-a3b1-5dc8602d9491
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

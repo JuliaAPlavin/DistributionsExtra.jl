@@ -6,6 +6,7 @@ using Reexport
 using ChainedFixes
 using DataPipes
 using AccessorsExtra
+using InverseFunctions
 
 export ℙ
 
@@ -27,45 +28,31 @@ end
 ℙ(f, d) = @p pred_to_intervals(f) |> intervals |> sum(int -> ℙ(∈(int), d))
 
 
+include("intervalsunion.jl")
+include("preimage.jl")
+
+
 pred_to_intervals(f::Base.Fix2{typeof(> )}) = Interval{:open,   :closed}( f.x, Inf)
 pred_to_intervals(f::Base.Fix2{typeof(>=)}) = Interval{:closed, :closed}( f.x, Inf)
 pred_to_intervals(f::Base.Fix2{typeof(==)}) = Interval{:closed, :closed}( f.x, f.x)
 pred_to_intervals(f::Base.Fix2{typeof(<=)}) = Interval{:closed, :closed}(-Inf, f.x)
 pred_to_intervals(f::Base.Fix2{typeof(< )}) = Interval{:closed,   :open}(-Inf, f.x)
-pred_to_intervals(f::Base.Fix2{typeof(∈), <:Interval}) = f.x
-pred_to_intervals(f::Base.Fix2{typeof(∉)}) = setdiff(-Inf..Inf, IntervalsUnion((f.x,)))
+pred_to_intervals(f::Base.Fix2{typeof(∈), <:Union{Interval, IntervalsUnion}}) = f.x
+pred_to_intervals(f::Base.Fix2{typeof(∉), <:Union{Interval, IntervalsUnion}}) = setdiff(-Inf..Inf, IntervalsUnion(f.x))
 
 pred_to_intervals(f::ChainedFixes.Or) =
-    @p ChainedFixes.getargs(f) |> map(pred_to_intervals) |> reduce(∪)
+    @p ChainedFixes.getargs(f) |> map(IntervalsUnion(pred_to_intervals(_))) |> reduce(∪)
 pred_to_intervals(f::ChainedFixes.And) =
 	@p ChainedFixes.getargs(f) |> map(pred_to_intervals) |> reduce(∩)
 
-pred_to_intervals(f::ComposedFunction{typeof(!)}) = setdiff(-Inf..Inf, pred_to_intervals(f.inner))
+pred_to_intervals(f::ComposedFunction{typeof(!)}) = setdiff(-Inf..Inf, IntervalsUnion(pred_to_intervals(f.inner)))
 if !(!identity isa ComposedFunction)  # Julia pre-1.9
     pred_to_intervals(f::typeof(!identity).name.wrapper) = pred_to_intervals((!) ∘ f.f)
 end
 
-
-struct IntervalsUnion{T}
-    ints::T
+function pred_to_intervals(f::ComposedFunction)
+	ints = pred_to_intervals(f.outer)
+	preimage(f.inner, ints)
 end
-
-_dropempty(iu::IntervalsUnion) = IntervalsUnion(filter(!isempty, iu.ints))
-
-_opposite_closedness(x::Symbol) = x == :closed ? :open : x == :open ? :closed : error()
-_setdiff(a::Interval{La, Ra}, b::Interval{Lb, Rb}) where {La, Ra, Lb, Rb} = IntervalsUnion((
-    Interval{La, _opposite_closedness(Lb)}(leftendpoint(a), leftendpoint(b)),
-    Interval{_opposite_closedness(Rb), Ra}(rightendpoint(b), rightendpoint(a)),
-))
-
-const IIU = Union{Interval, IntervalsUnion}
-
-Base.setdiff(a::Interval, b::IIU) = @p intervals(b) |> map(_setdiff(a, _)) |> reduce(∩)
-Base.:∪(a::IIU, b::IIU) = IntervalsUnion((intervals(a)..., intervals(b)...))
-Base.:∩(a::Interval, b::IntervalsUnion) = @modify(i -> a ∩ i, intervals(b)) |> _dropempty
-Base.:∩(a::IntervalsUnion, b::IntervalsUnion) = @p intervals(a) |> map(_ ∩ b) |> reduce(∪)
-
-intervals(x::Interval) = (x,)
-intervals(x::IntervalsUnion) = x.ints
 
 end
