@@ -22,7 +22,7 @@ preimage(::typeof(abs), image::Interval) =
         Interval{OC, OC}(-rightendpoint(image), rightendpoint(image))
     else
         neg = @p image |>
-            @modify(eps -> reverse(.-eps), endpoints(__)) |>
+            @modify(reverse ∘ (.-), endpoints(__)) |>
             @modify(reverse, closedendpoints(__))
         IntervalsUnion((image, neg))
     end
