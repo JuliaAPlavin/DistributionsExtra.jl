@@ -2,6 +2,8 @@ struct IntervalsUnion{T}
     ints::T
 end
 
+Base.:(==)(a::IntervalsUnion, b::IntervalsUnion) = a.ints == b.ints
+
 IntervalsUnion(x::Union{Interval, IntervalsUnion}) = convert(IntervalsUnion, x)
 Base.convert(::Type{IntervalsUnion}, x::IntervalsUnion) = x
 Base.convert(::Type{IntervalsUnion}, x::Interval) = IntervalsUnion((x,))
