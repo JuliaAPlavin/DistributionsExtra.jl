@@ -4,7 +4,7 @@ using TestItemRunner
 
 
 @testitem "to intervals" begin
-    using Accessors
+    using AccessorsExtra
     using DistributionsExtra: pred_to_intervals, IntervalsUnion
 
     @test pred_to_intervals(∈(0±5)) == -5..5
@@ -27,7 +27,7 @@ using TestItemRunner
 end
 
 @testitem "P" begin
-    using Accessors
+    using AccessorsExtra
 
     d = Poisson(1)
     @test ℙ(>=(0), d) == 1

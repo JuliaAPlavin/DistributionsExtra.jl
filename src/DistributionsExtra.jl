@@ -3,13 +3,13 @@ module DistributionsExtra
 using Reexport
 @reexport using Distributions
 @reexport using IntervalSets
-using ChainedFixes
 using DataPipes
 using AccessorsExtra
+using AccessorsExtra: getproperties
 using InverseFunctions
 using QuadGK
 
-export ℙ, ℙᵋ, ⩔, ⩓
+export ℙ, ℙᵋ
 
 
 ℙ(f::Base.Fix2{typeof(< )}, d::UnivariateDistribution) = cdf(d, f.x - √eps(float(typeof(f.x))))
@@ -50,10 +50,10 @@ pred_to_intervals(f::Base.Fix2{typeof(∈), <:Union{Interval, IntervalsUnion}}) 
 pred_to_intervals(f::Base.Fix2{typeof(∉), <:Union{Interval, IntervalsUnion}}) = pred_to_intervals(!∈(f.x))
 pred_to_intervals(f::Base.Fix2{typeof(!=)}) = pred_to_intervals(!(==)(f.x))
 
-pred_to_intervals(f::ChainedFixes.Or) =
-    @p ChainedFixes.getargs(f) |> map(IntervalsUnion(pred_to_intervals(_))) |> reduce(∪)
-pred_to_intervals(f::ChainedFixes.And) =
-    @p ChainedFixes.getargs(f) |> map(pred_to_intervals) |> reduce(∩)
+pred_to_intervals(f::⩔) =
+    @p getproperties(f) |> map(IntervalsUnion(pred_to_intervals(_))) |> reduce(∪)
+pred_to_intervals(f::⩓) =
+    @p getproperties(f) |> map(pred_to_intervals) |> reduce(∩)
 
 pred_to_intervals(f::ComposedFunction{typeof(!)}) = setdiff(-Inf..Inf, IntervalsUnion(pred_to_intervals(f.inner)))
 if !(!identity isa ComposedFunction)  # Julia pre-1.9
