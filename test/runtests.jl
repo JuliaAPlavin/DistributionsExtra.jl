@@ -1,10 +1,12 @@
-using DistributionsExtra
-using DistributionsExtra: pred_to_intervals, IntervalsUnion
-using ChainedFixes
-using Accessors
-using Test
+using TestItems
+using TestItemRunner
+@run_package_tests
 
-@testset "to intervals" begin
+
+@testitem "to intervals" begin
+    using Accessors
+    using DistributionsExtra: pred_to_intervals, IntervalsUnion
+
     @test pred_to_intervals(∈(0±5)) == -5..5
     @test pred_to_intervals(∉(0±5)) == IntervalsUnion((Interval{:closed, :open}(-Inf, -5), Interval{:open, :closed}(5, Inf)))
     @test pred_to_intervals(>(10) ⩔ <(2) ⩔ ∈(4..5) ⩔ ==(6)) == IntervalsUnion((Interval{:open, :closed}(10, Inf), Interval{:closed, :open}(-Inf, 2), 4..5, 6..6))
@@ -24,7 +26,9 @@ using Test
     # @test_broken pred_to_intervals(@optic(10^_ ∈ -1..100)) == -Inf..2
 end
 
-@testset "P" begin
+@testitem "P" begin
+    using Accessors
+
     d = Poisson(1)
     @test ℙ(>=(0), d) == 1
     @test ℙ(<(0), d) == 0
@@ -46,6 +50,10 @@ end
     end
 end
 
+@testitem "_" begin
+    import CompatHelperLocal as CHL
+    CHL.@check()
 
-import CompatHelperLocal as CHL
-CHL.@check()
+    using Aqua
+    Aqua.test_all(DistributionsExtra, piracy=false, ambiguities=false)
+end
