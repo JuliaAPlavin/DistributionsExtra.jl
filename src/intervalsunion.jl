@@ -25,6 +25,4 @@ Base.:∩(a::IntervalsUnion, b::Interval) = @modify(i -> b ∩ i, intervals(a) |
 Base.:∩(a::IntervalsUnion, b::IntervalsUnion) = @p intervals(a) |> map(_ ∩ b) |> reduce(∪)
 
 intervals(x::Interval) = (x,)
-intervals(x::IntervalsUnion) = x.ints
-
-Accessors.set(x::IntervalsUnion, ::typeof(intervals), v) = IntervalsUnion(v)
+@accessor intervals(x::IntervalsUnion) = x.ints
