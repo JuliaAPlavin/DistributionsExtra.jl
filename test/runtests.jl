@@ -57,10 +57,20 @@ end
     end
 end
 
+@testitem "distributions + intervals integration" begin
+    @test Uniform(1..5) === Uniform(1, 5)
+    @test LogUniform(1..5) === LogUniform(1, 5)
+    @test truncated(Normal(0, 1), 0..Inf) === truncated(Normal(0, 1), 0, Inf)
+    @test censored(Normal(0, 1), 0..Inf) === censored(Normal(0, 1), 0, Inf)
+    @test convert(Interval, support(Uniform(1..5))) == 1..5
+    @test Interval(Uniform(1..5)) == 1..5
+    @test Interval(Normal(0, 1)) == -Inf..Inf
+end
+
 @testitem "_" begin
     import CompatHelperLocal as CHL
     CHL.@check()
 
     using Aqua
-    Aqua.test_all(DistributionsExtra, ambiguities=false)
+    Aqua.test_all(DistributionsExtra, ambiguities=false, piracies=false)
 end
