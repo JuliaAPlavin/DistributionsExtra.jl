@@ -3,7 +3,46 @@ using TestItemRunner
 @run_package_tests
 
 
-@testitem "to intervals" begin
+@testitem "d/piecewise" begin
+    d = PiecewiseUniform(edges=[0, 1, 3, 3.5], probs=[1/3, 1/3, 1/3])
+    vals = rand(d, 10^4)
+    @test all(0 .<= vals .<= 3.5)
+    @test pdf(d, -0.5) == 0
+    @test pdf(d, 0) == 1/3
+    @test pdf(d, 0.5) == 1/3
+    @test pdf(d, 1.5) == 1/6
+    @test pdf(d, 3) == 2/3
+    @test pdf(d, 3.5) == 2/3
+    @test pdf(d, 4) == 0
+end
+
+@testitem "d/sphereuniform" begin
+    using DistributionsExtra.DataPipes
+
+	d = SphereUniformArea()
+	@test pdf(d, [1, 0, 0]) ≈ 1/4π
+	@test pdf(d, [0.5, 0.5, 0]) == 0
+	@test pdf(d, [0.5, 0.5]) == 1/4π
+	p = @p rand(d, 10^3) eachcol() map(pdf(d, _)) unique only
+	@test p ≈ 1/(4π)
+
+	d = SphereUniformLonLat()
+	int = quadgk(-π/2, π/2) do lat
+		quadgk(-π, π) do lon
+			pdf(d, [lon, lat])
+		end[1]
+	end[1]
+	@test int ≈ 1
+	p1 = @p rand(d, 10^6) eachcol() mean(_[2] > 0.5)
+	p2 = quadgk(-π/2, π/2) do lat
+		quadgk(-π, π) do lon
+			(lat > 0.5) * pdf(d, [lon, lat])
+		end[1]
+	end[1]
+	@test isapprox(p1, p2; rtol=1e-2)
+end
+
+@testitem "pred_to_intervals" begin
     using DistributionsExtra: pred_to_intervals, IntervalUnion
 
     @test pred_to_intervals(∈(0±5.)) == -5..5
