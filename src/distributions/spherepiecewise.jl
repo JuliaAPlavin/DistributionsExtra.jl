@@ -6,11 +6,11 @@ end
 SpherePiecewiseLatUniformArea(; kwargs...) = SpherePiecewiseLatUniformArea(values(kwargs))
 
 SpherePiecewiseLatUniformArea((;edges, probs)::NamedTuple{(:edges,:probs)}) =
-    SpherePiecewiseLatUniformArea(PiecewiseUniform(;edges, probs), map(sphere_area_of_lats, edges_to_ints(edges)))
+    SpherePiecewiseLatUniformArea(PiecewiseUniform((;edges, probs)), map(sphere_area_of_lats, edges_to_ints(edges)))
 SpherePiecewiseLatUniformArea((;edges, relprobs)::NamedTuple{(:edges,:relprobs)}) =
-    SpherePiecewiseLatUniformArea(;edges, probs=relprobs ./ sum(relprobs))
+    SpherePiecewiseLatUniformArea((;edges, probs=relprobs ./ sum(relprobs)))
 SpherePiecewiseLatUniformArea((;edges, reldensities)::NamedTuple{(:edges,:reldensities)}) =
-    SpherePiecewiseLatUniformArea(;edges, relprobs=reldensities .* map(sphere_area_of_lats, edges_to_ints(edges)))
+    SpherePiecewiseLatUniformArea((;edges, relprobs=reldensities .* map(sphere_area_of_lats, edges_to_ints(edges))))
 
 Base.length(d::SpherePiecewiseLatUniformArea) = 2
 

@@ -8,9 +8,9 @@ PiecewiseUniform(; kwargs...) = PiecewiseUniform(values(kwargs))
 PiecewiseUniform((;edges, probs)::NamedTuple{(:edges,:probs)}) =
     PiecewiseUniform(edges, DiscreteNonParametric(Base.OneTo(length(edges) - 1), probs))
 PiecewiseUniform((;edges, relprobs)::NamedTuple{(:edges,:relprobs)}) =
-    PiecewiseUniform(;edges, probs=relprobs ./ sum(relprobs))
+    PiecewiseUniform((;edges, probs=relprobs ./ sum(relprobs)))
 PiecewiseUniform((;edges, reldensities)::NamedTuple{(:edges,:reldensities)}) =
-    PiecewiseUniform(;edges, relprobs=reldensities .* diff(edges))
+    PiecewiseUniform((;edges, relprobs=reldensities .* diff(edges)))
 
 function Base.rand(rng::AbstractRNG, d::PiecewiseUniform)
     i = rand(rng, d.dnp)
