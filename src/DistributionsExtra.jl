@@ -6,13 +6,45 @@ using Reexport
 @reexport using IntervalUnions
 using IntervalUnions: intervals
 using DataPipes
-using AccessorsExtra
+@reexport using AccessorsExtra
 using AccessorsExtra: getproperties
 using InverseFunctions
 using QuadGK
 
 export ℙ, ℙᵋ
 
+"""    ℙ(pred, dist)
+
+Compute the probability of a predicate being true under a given distribution.
+In mathematical terms, it computes `ℙ(pred(x))` given that `x ~ dist`.
+
+`ℙ` is "exact" in the sense that it doesn't perform numerical integration.
+Instead, the predicate is transformed into a union of intervals, and their probabilities are computed with `cdf`/`ccdf`/`pdf` functions.
+
+# Examples
+```
+julia> ℙ(>(0), Normal(0, 1))
+0.5
+
+# predicate has to be an introspectable function composed from elements like Base.Fix2
+# for example, >(0) works but anonymous x -> x > 0 doesn't:
+julia> ℙ(x -> x > 0, Normal(0, 1))
+ERROR: MethodError ...
+
+julia> ℙ(>(2) ⩔ <(-2), Normal(0, 1))
+0.04550026309183032
+
+julia> ℙ((@o abs(_) > 2), Normal(0, 1))
+0.04550026309183032
+
+julia> ℙ(∈(1..5), Normal(0, 1))
+0.15865497088552993
+
+julia> ℙ(∈(0:2), Poisson(1))
+0.9196986029286058
+```
+"""
+function ℙ end
 
 ℙ(f::Base.Fix2{typeof(< )}, d::UnivariateDistribution) = cdf(d, f.x - √eps(float(typeof(f.x))))
 ℙ(f::Base.Fix2{typeof(<=)}, d::UnivariateDistribution) = cdf(d, f.x)
