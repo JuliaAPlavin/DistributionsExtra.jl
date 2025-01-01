@@ -1,4 +1,4 @@
-function preimage(f, image::DistributionsExtra.IntervalsUnion)
+function preimage(f, image::IntervalUnion)
     mapreduce(int -> preimage(f, int), ∪, image.ints)
 end
 
@@ -24,5 +24,5 @@ preimage(::typeof(abs), image::Interval) =
         neg = @p image |>
             @modify(reverse ∘ (.-), endpoints(__)) |>
             @modify(reverse, closedendpoints(__))
-        IntervalsUnion((image, neg))
+        IntervalUnion((image, neg))
     end

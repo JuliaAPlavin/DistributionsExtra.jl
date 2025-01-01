@@ -8,7 +8,7 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
 AccessorsExtra = "0.1.47"
-Aqua = "0.6.3"
+Aqua = "0.8"
 CompatHelperLocal = "0.1.24"
 TestItemRunner = "0.2.1"
 TestItems = "0.1.1"
