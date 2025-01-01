@@ -49,6 +49,9 @@ pred_to_intervals(f::Base.Fix2{typeof(∈), <:Union{Interval, IntervalUnion}}) =
 pred_to_intervals(f::Base.Fix2{typeof(∉), <:Union{Interval, IntervalUnion}}) = pred_to_intervals(!∈(f.x))
 pred_to_intervals(f::Base.Fix2{typeof(!=)}) = pred_to_intervals(!(==)(f.x))
 
+pred_to_intervals(f::AccessorsExtra.FixArgs{typeof(isapprox), <:Tuple{AccessorsExtra.Placeholder, <:Any}, <:NamedTuple{(:atol,)}}) = f.args[2] ± f.kwargs.atol
+pred_to_intervals(f::AccessorsExtra.FixArgs{typeof(isapprox), <:Tuple{<:Any, AccessorsExtra.Placeholder}, <:NamedTuple{(:atol,)}}) = f.args[1] ± f.kwargs.atol
+
 pred_to_intervals(f::⩔) =
     @p getproperties(f) |> map(IntervalUnion(pred_to_intervals(_))) |> reduce(∪)
 pred_to_intervals(f::⩓) =
