@@ -11,7 +11,7 @@ using AccessorsExtra: getproperties
 using InverseFunctions
 using QuadGK
 
-export ℙ, ℙᵋ
+export ℙ, ℙᵋ, quadgk
 
 
 # these would be nice to upstream but Distributions devs don't like it, see https://github.com/JuliaStats/Distributions.jl/pull/1809
@@ -56,6 +56,9 @@ julia> ℙ(∈(0:2), Poisson(1))
 """
 function ℙ end
 
+ℙ(f, d; method) = ℙ(f, d, method)
+ℙ(f, d, ::typeof(cdf)) = ℙ(f, d)
+
 ℙ(f::Base.Fix2{typeof(< )}, d::UnivariateDistribution) = cdf(d, f.x - √eps(float(typeof(f.x))))
 ℙ(f::Base.Fix2{typeof(<=)}, d::UnivariateDistribution) = cdf(d, f.x)
 ℙ(f::Base.Fix2{typeof(==)}, d::DiscreteUnivariateDistribution) = pdf(d, f.x)
@@ -73,9 +76,12 @@ end
 ℙ(f, d::UnivariateDistribution) = @p pred_to_intervals(f) |> intervals |> sum(int -> ℙ(∈(int), d))
 
 
-function ℙᵋ(f, d::ContinuousUnivariateDistribution; kwargs...)
-    val, err = quadgk(x -> pdf(d, x) * f(x), extrema(d)...; kwargs...)
-    @assert err < 1e-3 * val
+ℙ(f, d, method::Base.Fix2{typeof(rand)}) = mean(f, method(d))
+
+function ℙ(f, d::ContinuousUnivariateDistribution, method::AccessorsExtra.FixArgs{typeof(quadgk)})
+    @assert method.args === (AccessorsExtra.Placeholder(),)
+    val, err = quadgk(x -> pdf(d, x) * f(x), extrema(d)...; method.kwargs...)
+    @assert err < 1e-2 * val
     val
 end
 

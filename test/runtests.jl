@@ -25,7 +25,7 @@ using TestItemRunner
     @test_broken pred_to_intervals(@o(10^_ ∈ -1..100)) == -Inf..2
 end
 
-@testitem "P" begin
+@testitem "P analytic" begin
     d = Poisson(1)
     @test ℙ(>=(0), d) == 1
     @test ℙ(<(0), d) == 0
@@ -47,13 +47,27 @@ end
     @test ℙ(≥(0), d) == 1
     @test ℙ(≥(5), d) ≈ 2.866515940330412e-7  rtol=∛eps()
     @test ℙ((@o ≈(_, 3, atol=1e-3)), d) ≈ pdf(d, 3)*2*1e-3  rtol=1e-4
+end
 
-    @testset for P in [ℙ, ℙᵋ]
+@testitem "P methods" begin
+    d = Normal(0, 1)
+    @test ℙ(≥(2), d) == 0.02275013275270731
+    @test ℙ(≥(2), d) === ℙ(≥(2), d; method=cdf)
+    @test_throws MethodError ℙ(x -> x ≥ 2, d)
+    @test ℙ(x -> x ≥ 2, d; method=@o rand(_, 10^6)) ≈ 0.0227  rtol=0.02
+    @test ℙ(x -> x ≥ 2, d; method=@o quadgk(_, rtol=1e-4)) ≈ 0.022750132  rtol=1e-4
+    @test ℙ(x -> x ≥ 2, d; method=@o quadgk(_, atol=1e-10)) ≈ 0.022750132  rtol=1e-4
+
+    @testset for method in [
+            cdf,
+            # (@o rand(_, 10^6)),
+            (@o quadgk(_, rtol=1e-8))
+        ]
         d = Normal(0, 1)
-        @test P(>=(5), d) ≈ 2.866515940330412e-7  rtol=∛eps()
-        @test P(∉(0±5), d) == P(@o(abs(_) > 5), d)
-        @test P(∉(0±5), d) ≈ 5.73303121648882e-7  rtol=∛eps()
-        @test P(@o(abs(_) > 2), d) + P(@o(abs(_) < 2), d) ≈ 1
+        @test ℙ(>=(5), d; method) ≈ 2.866515940330412e-7  rtol=∛eps()
+        @test ℙ(∉(0±5), d; method) == ℙ(@o(abs(_) > 5), d; method)
+        @test ℙ(∉(0±5), d; method) ≈ 5.73303121648882e-7  rtol=∛eps()
+        @test ℙ(@o(abs(_) > 2), d; method) + ℙ(@o(abs(_) < 2), d; method) ≈ 1
     end
 end
 
