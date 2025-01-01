@@ -15,11 +15,12 @@ using LinearAlgebra: normalize!
 
 export
     ℙ, quadgk,
-    PiecewiseUniform, SphereUniformArea, SphereUniformLonLat
+    PiecewiseUniform, SphereUniformArea, SphereUniformLonLat, SpherePiecewiseLatUniformArea
 
 include("intervals_integrations.jl")
 include("distributions/piecewise.jl")
 include("distributions/sphereuniform.jl")
+include("distributions/spherepiecewise.jl")
 
 
 """    ℙ(pred, dist)

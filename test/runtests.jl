@@ -7,6 +7,7 @@ using TestItemRunner
     d = PiecewiseUniform(edges=[0, 1, 3, 3.5], probs=[1/3, 1/3, 1/3])
     vals = rand(d, 10^4)
     @test all(0 .<= vals .<= 3.5)
+
     @test pdf(d, -0.5) == 0
     @test pdf(d, 0) == 1/3
     @test pdf(d, 0.5) == 1/3
@@ -14,6 +15,14 @@ using TestItemRunner
     @test pdf(d, 3) == 2/3
     @test pdf(d, 3.5) == 2/3
     @test pdf(d, 4) == 0
+
+    @test cdf(d, -0.5) == 0
+    @test cdf(d, 0) == 0
+    @test cdf(d, 0.5) == 1/6
+    @test cdf(d, 1.5) ≈ 5/12
+    @test cdf(d, 3) ≈ 2/3
+    @test cdf(d, 3.5) == 1
+    @test cdf(d, 4) == 1
 end
 
 @testitem "d/sphereuniform" begin
@@ -40,6 +49,36 @@ end
 		end[1]
 	end[1]
 	@test isapprox(p1, p2; rtol=1e-2)
+end
+
+@testitem "d/spherepiecewise" begin
+    using Unitful
+    using DistributionsExtra: sphere_area_of_lats
+
+    @assert sphere_area_of_lats(-π/2..π/2) ≈ 4π
+    @assert sphere_area_of_lats(0..π/2) ≈ 2π
+    @assert sphere_area_of_lats(-90u"°"..90u"°") ≈ 4π
+    @assert sphere_area_of_lats(-90u"°"..0u"°") ≈ 2π
+    @assert sphere_area_of_lats(30u"°"..90u"°") ≈ π
+    @assert sphere_area_of_lats(-30u"°"..30u"°") ≈ 2π
+    @assert sphere_area_of_lats(0u"°"..30u"°") ≈ π
+    @assert sphere_area_of_lats(-30u"°"..90u"°") ≈ 3π
+
+
+    d = SpherePiecewiseLatUniformArea(edges=[-90u"°", 90u"°"], reldensities=[1])
+	@assert pdf(d, [0.5,  -1]) ≈ 1/4π
+	@assert pdf(d, [0.5,   0]) ≈ 1/4π
+	@assert pdf(d, [0.5, 1.5]) ≈ 1/4π
+
+    d = SpherePiecewiseLatUniformArea(edges=[-90u"°", -30u"°", 90u"°"], reldensities=[1, 1])
+	@assert pdf(d, [0.5,  -1]) ≈ 1/4π
+	@assert pdf(d, [0.5,   0]) ≈ 1/4π
+	@assert pdf(d, [0.5, 1.5]) ≈ 1/4π
+
+    d = SpherePiecewiseLatUniformArea(edges=[-90u"°", -30u"°", 90u"°"], reldensities=[3, 1])
+	@assert pdf(d, [0.5,  -1]) ≈ 2/4π
+	@assert pdf(d, [0.5,   0]) ≈ (2/3)/4π
+	@assert pdf(d, [0.5, 1.5]) ≈ (2/3)/4π
 end
 
 @testitem "pred_to_intervals" begin
