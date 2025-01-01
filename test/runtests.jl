@@ -159,6 +159,12 @@ end
     @test Interval(Normal(0, 1)) == -Inf..Inf
 end
 
+@testitem "uniform" begin
+    @test uniform(1..5) === Uniform(1, 5)
+    @test uniform(5:10) === DiscreteUniform(5, 10)
+    @test uniform([2, 5, 10]) == DiscreteNonParametric([2, 5, 10], [1/3, 1/3, 1/3])
+end
+
 @testitem "_" begin
     import CompatHelperLocal as CHL
     CHL.@check()
