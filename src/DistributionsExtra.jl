@@ -43,6 +43,7 @@ julia> ℙ(>(0), Normal(0, 1))
 julia> ℙ(x -> x > 0, Normal(0, 1))
 ERROR: MethodError ...
 
+# arbitrary compositions and combinations of predicates are supported:
 julia> ℙ(>(2) ⩔ <(-2), Normal(0, 1))
 0.04550026309183032
 
